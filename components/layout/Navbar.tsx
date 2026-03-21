@@ -7,7 +7,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="absolute w-full gap-3 z-50 px-6 md:px-10 py-4 flex items-center justify-between bg-white/10 backdrop-blur-md">
+    <nav className="fixed w-full gap-3 z-50 px-6 md:px-10 py-4 flex items-center justify-between bg-white/10 backdrop-blur-md">
       {/* LOGO */}
       <h1 className="text-white font-bold tracking-widest text-lg">NAVE</h1>
 
