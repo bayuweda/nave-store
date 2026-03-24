@@ -1,26 +1,63 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function ProductGallery({ images }: any) {
-  const [active, setActive] = useState(images[0]);
+export default function ProductGallery({ images = [] }: { images: string[] }) {
+  // Gunakan state awal null, lalu update lewat useEffect jika images berubah
+  const [active, setActive] = useState<string | null>(null);
+  const [zoomStyle, setZoomStyle] = useState({});
+
+  // Sinkronkan state active dengan props images yang datang dari database
+  useEffect(() => {
+    if (images && images.length > 0) {
+      setActive(images[0]);
+    }
+  }, [images]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } =
+      e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: "scale(2)",
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setZoomStyle({
+      transform: "scale(1)",
+      transformOrigin: "center",
+    });
+  };
+
+  // Tampilkan loading/placeholder jika belum ada gambar sama sekali
+  if (!active) {
+    return (
+      <div className="w-[530px] h-[450px] bg-gray-100 animate-pulse rounded-lg" />
+    );
+  }
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-6">
       {/* THUMBNAILS */}
-      <div className="flex  flex-col justify-between shadow-2xl">
-        {images.map((img: string) => (
+      <div className="flex flex-col gap-4">
+        {images.map((img, idx) => (
           <button
-            key={img}
+            key={idx}
             onClick={() => setActive(img)}
-            className={`border bg-white/35  rounded-lg overflow-hidden w-full h-36 
-            ${active === img ? "border-amber-900" : "border-transparent"}
-            `}
+            className={`border-2 rounded-lg overflow-hidden w-20 h-20 transition-all ${
+              active === img
+                ? "border-black shadow-md"
+                : "border-transparent opacity-60 hover:opacity-100"
+            }`}
           >
             <Image
               src={img}
-              alt="thumbnail"
+              alt={`thumbnail-${idx}`}
               width={80}
               height={80}
               className="object-cover w-full h-full"
@@ -30,13 +67,18 @@ export default function ProductGallery({ images }: any) {
       </div>
 
       {/* MAIN IMAGE */}
-      <div className="bg-white/35 shadow-2xl rounded-lg p-6 flex items-center justify-center w-[450px] h-[450px]">
+      <div
+        className="bg-gray-100 rounded-xl overflow-hidden w-[450px] h-[450px] flex items-center justify-center cursor-zoom-in border border-gray-100 relative"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         <Image
           src={active}
           alt="product image"
-          width={400}
-          height={400}
-          className="object-contain"
+          fill // Pakai fill agar lebih fleksibel dengan container zoom
+          style={zoomStyle}
+          className="object-contain transition-transform duration-200"
+          sizes="450px"
         />
       </div>
     </div>

@@ -1,64 +1,155 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, X, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Search, User, LayoutDashboard, LogOut } from "lucide-react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  // 1. Cek status login & Deteksi Scroll
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      },
+    );
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
 
   return (
-    <nav className="fixed w-full gap-3 z-50 px-6 md:px-10 py-4 flex items-center justify-between bg-white/10 backdrop-blur-md">
+    <nav
+      className={`fixed w-full z-[100] transition-all duration-300 px-6 md:px-16 py-5 flex items-center justify-between
+      ${
+        isScrolled
+          ? "bg-white/80 backdrop-blur-lg shadow-sm py-4 text-black"
+          : "bg-transparent text-white"
+      }`}
+    >
       {/* LOGO */}
-      <h1 className="text-white font-bold tracking-widest text-lg">NAVE</h1>
+      <Link href="/" className="group">
+        <h1 className="font-black tracking-[0.3em] text-xl italic group-hover:scale-105 transition-transform">
+          NAVE
+        </h1>
+      </Link>
 
-      <div className="flex gap-4 items-center">
-        {/* SEARCH */}
-        <div className="hidden md:flex items-center bg-white/20 px-4 py-2 rounded-sm w-[300px] gap-2">
-          <Search size={16} className="text-white/70" />
+      {/* CENTER MENU (Desktop) */}
+      <ul className="hidden md:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] items-center">
+        <li className="hover:opacity-60 transition-opacity">
+          <Link href="/">Home</Link>
+        </li>
+        <li className="hover:opacity-60 transition-opacity">
+          <Link href="/products">Shop</Link>
+        </li>
+        <li className="hover:opacity-60 transition-opacity">
+          <Link href="#reviews">Reviews</Link>
+        </li>
+        <li className="hover:opacity-60 transition-opacity">
+          <Link href="#footer">Contact</Link>
+        </li>
+      </ul>
+
+      <div className="flex gap-6 items-center">
+        {/* SEARCH (Desktop) */}
+        <div
+          className={`hidden lg:flex items-center px-4 py-2 rounded-full border transition-all w-[220px] gap-2
+          ${isScrolled ? "border-black/10 bg-gray-100/50" : "border-white/20 bg-white/10"}`}
+        >
+          <Search size={14} className="opacity-50" />
           <input
             type="text"
-            placeholder="search"
-            className="bg-transparent outline-none text-white text-sm w-full placeholder:text-white/70"
+            placeholder="SEARCH..."
+            className="bg-transparent outline-none text-[10px] w-full placeholder:text-current placeholder:opacity-50 font-bold uppercase tracking-widest"
           />
         </div>
 
-        {/* MENU */}
-        <ul className="hidden md:flex gap-8 text-white text-sm items-center">
-          <li className="cursor-pointer hover:text-gray-300">Home</li>
-          <li className="cursor-pointer hover:text-gray-300">Tentang kami</li>
-          <li className="cursor-pointer hover:text-gray-300">Produk</li>
-          <li className="cursor-pointer hover:text-gray-300">Kontak</li>
+        {/* AUTH BUTTON */}
+        <div className="hidden md:block">
+          {user ? (
+            <div className="flex items-center gap-4">
+              <Link
+                href="/admin/dashboard"
+                className="p-2 hover:bg-black/5 rounded-full transition"
+                title="Dashboard"
+              >
+                <LayoutDashboard size={18} />
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
+          ) : (
+            <Link href="/login">
+              <button
+                className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all
+                ${
+                  isScrolled
+                    ? "bg-black text-white hover:bg-zinc-800"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
+              >
+                Sign In
+              </button>
+            </Link>
+          )}
+        </div>
 
-          {/* LOGIN BUTTON */}
-          <li>
-            <button className="ml-4 px-4 py-2 rounded-sm bg-white text-black text-sm font-medium hover:bg-gray-200 transition">
-              Login
-            </button>
+        {/* HAMBURGER (Mobile) */}
+        <button className="md:hidden" onClick={() => setOpen(!open)}>
+          {open ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      <div
+        className={`absolute top-0 left-0 w-full h-screen bg-black text-white transition-all duration-500 flex flex-col items-center justify-center gap-8 md:hidden
+        ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"}`}
+      >
+        <button
+          className="absolute top-6 right-6"
+          onClick={() => setOpen(false)}
+        >
+          <X size={30} />
+        </button>
+
+        <ul className="flex flex-col items-center gap-6 text-lg font-black uppercase tracking-[0.3em]">
+          <li onClick={() => setOpen(false)}>
+            <Link href="/">Home</Link>
+          </li>
+          <li onClick={() => setOpen(false)}>
+            <Link href="/products">Shop</Link>
+          </li>
+          <li onClick={() => setOpen(false)}>
+            <Link href="#reviews">Reviews</Link>
+          </li>
+          <li onClick={() => setOpen(false)}>
+            <Link href="/login">Admin</Link>
           </li>
         </ul>
       </div>
-
-      {/* HAMBURGER */}
-      <button className="md:hidden text-white" onClick={() => setOpen(!open)}>
-        {open ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* MOBILE MENU */}
-      {open && (
-        <div className="absolute top-full left-0 w-full bg-black/90 backdrop-blur-md flex flex-col items-center py-6 gap-6 text-white md:hidden">
-          <ul className="flex flex-col items-center gap-4 text-sm">
-            <li>Home</li>
-            <li>Tentang kami</li>
-            <li>Produk</li>
-            <li>Kontak</li>
-          </ul>
-
-          {/* LOGIN BUTTON MOBILE */}
-          <button className="px-6 py-2 rounded-sm bg-white text-black text-sm font-medium hover:bg-gray-200 transition">
-            Login
-          </button>
-        </div>
-      )}
     </nav>
   );
 }
