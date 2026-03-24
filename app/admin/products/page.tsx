@@ -21,7 +21,7 @@ export default async function ProductsAdmin() {
         </div>
 
         <Link
-          href="/admin/products/new"
+          href="/admin/products/create"
           className="inline-flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-zinc-800 transition-all shadow-lg shadow-black/10 active:scale-95"
         >
           <Plus className="w-5 h-5" />
