@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { supabase } from "@/lib/supabase";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
