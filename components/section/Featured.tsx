@@ -35,7 +35,7 @@ export default async function Featured() {
       <h2 className="text-2xl font-black mb-10">Featured Products</h2>
 
       {/* GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-6">
         {products.map((product: any) => {
           // Logika mencari gambar (is_primary atau index ke-0)
           const displayImage =
@@ -46,13 +46,20 @@ export default async function Featured() {
           return (
             <div key={product.id} className="group cursor-pointer">
               {/* IMAGE */}
-              <div className="bg-[#D3D3D3] p-2.5 rounded-xl overflow-hidden relative">
+              <div className="bg-[#D3D3D3] p-2.5 rounded-xl aspect-square overflow-hidden relative">
                 <Image
                   src={displayImage}
                   alt={product.name}
                   width={300}
                   height={300}
-                  className="object-cover w-full h-[220px] transition duration-300 group-hover:scale-105"
+                  className="object-cover hidden lg:block w-full h-[220px] transition duration-300 group-hover:scale-105"
+                />
+                <Image
+                  src={displayImage}
+                  alt={product.name}
+                  width={100}
+                  height={100}
+                  className="object-cover lg:hidden w-full  transition duration-500 group-hover:scale-110"
                 />
 
                 {/* HOVER BUTTON */}

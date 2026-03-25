@@ -10,6 +10,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   // 1. Cek status login & Deteksi Scroll
@@ -34,6 +35,14 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.refresh();
+  };
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim() !== "") {
+      router.push(`/products?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery(""); // Bersihkan input setelah search
+      setOpen(false); // Tutup menu mobile jika sedang terbuka
+    }
   };
 
   return (
@@ -71,13 +80,16 @@ export default function Navbar() {
       <div className="flex gap-6 items-center">
         {/* SEARCH (Desktop) */}
         <div
-          className={`hidden lg:flex items-center px-4 py-2 rounded-full border transition-all w-[220px] gap-2
+          className={` flex items-center px-4 py-2 rounded-full border transition-all w-[220px] gap-2
           ${isScrolled ? "border-black/10 bg-gray-100/50" : "border-white/20 bg-white/10"}`}
         >
           <Search size={14} className="opacity-50" />
           <input
             type="text"
             placeholder="SEARCH..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearch}
             className="bg-transparent outline-none text-[10px] w-full placeholder:text-current placeholder:opacity-50 font-bold uppercase tracking-widest"
           />
         </div>
