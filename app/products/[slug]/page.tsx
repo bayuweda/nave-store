@@ -52,12 +52,12 @@ export default async function ProductDetail({
   const waLink = `https://wa.me/628123456789?text=${encodeURIComponent(waMessage)}`;
 
   return (
-    <div className="bg-gradient-to-r from-[#382B19] to-[#F5F5F5] text-white min-h-screen">
+    <div className="bg-gradient-to-r from-[#382B19] to-[#F5F5F5] w-full  text-white min-h-screen">
       <Navbar />
 
       <main className="pt-16 md:pt-24 pb-20">
         <section className="px-0 md:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-12">
+          <div className="grid grid-cols-1 px-6 mx-auto lg:grid-cols-12 gap-y-8 lg:gap-x-12">
             {/* LEFT: GALLERY */}
             <div className="lg:col-span-7">
               <div className="lg:sticky lg:top-32">
