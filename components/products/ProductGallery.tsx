@@ -42,14 +42,15 @@ export default function ProductGallery({ images = [] }: { images: string[] }) {
   }
 
   return (
-    <div className="flex gap-6">
+    <div className="flex lg:flex-row  flex-col-reverse  gap-6">
       {/* THUMBNAILS */}
-      <div className="flex flex-col gap-4">
+
+      <div className="flex justify-start lg:flex-col  gap-4">
         {images.map((img, idx) => (
           <button
             key={idx}
             onClick={() => setActive(img)}
-            className={`border-2 rounded-lg overflow-hidden w-20 h-20 transition-all ${
+            className={`border-2 bg-slate-100 rounded-lg overflow-hidden w-20 h-20 transition-all ${
               active === img
                 ? "border-black shadow-md"
                 : "border-transparent opacity-60 hover:opacity-100"
@@ -68,7 +69,7 @@ export default function ProductGallery({ images = [] }: { images: string[] }) {
 
       {/* MAIN IMAGE */}
       <div
-        className="bg-gray-100 rounded-xl overflow-hidden w-[450px] h-[450px] flex items-center justify-center cursor-zoom-in border border-gray-100 relative"
+        className="bg-white/45 rounded-xl overflow-hidden w-[450px] h-[450px] flex items-center justify-center cursor-zoom-in border border-gray-100 relative"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >

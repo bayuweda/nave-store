@@ -11,7 +11,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // tambahkan konfigurasi lain jika ada di sini
+  // Kita hapus bagian experimental: { turbopack: ... }
+  // karena Next.js akan mendeteksi root otomatis setelah lockfile luar dihapus.
 };
 
 export default nextConfig;
