@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
+import LoadingModal from "@/components/ui/LoadingModal";
+import SuccessModal from "@/components/ui/SuccessModal";
 
 function generateSlug(text: string) {
   return text
@@ -35,6 +37,12 @@ export default function AddProduct() {
 
   // State untuk menampung list kategori dari database
   const [categories, setCategories] = useState<{ name: string }[]>([]);
+
+  // loading state untuk menampilkan modal loading saat submit form
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // State untuk modal sukses
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // --- FETCH CATEGORIES ---
   useEffect(() => {
@@ -94,6 +102,8 @@ export default function AddProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsSubmitting(true); // Tampilkan modal loading
+
     // Validasi Dasar
     if (!name) return alert("Nama produk wajib diisi");
     if (!category) return alert("Silakan pilih kategori produk");
@@ -138,7 +148,7 @@ export default function AddProduct() {
       }
     }
 
-    alert("Produk berhasil ditambahkan!");
+    setShowSuccessModal(true); // Tampilkan modal sukses
     resetForm();
   };
 
@@ -357,6 +367,14 @@ export default function AddProduct() {
             </div>
           </div>
         </form>
+        <LoadingModal isOpen={isSubmitting} />
+        <SuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => {
+            setShowSuccessModal(false);
+            setIsSubmitting(false);
+          }}
+        />
       </div>
     </div>
   );

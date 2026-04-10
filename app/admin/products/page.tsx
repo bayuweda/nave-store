@@ -30,7 +30,7 @@ export default async function ProductsAdmin() {
         </Link>
       </div>
       {/* PRODUCT GRID - 2 Kolom di Mobile, 4 di Desktop XL */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-3 md:gap-6 px-3">
         {products.map((product: any) => {
           const primaryImage = product.product_images?.find(
             (img: any) => img.is_primary,
@@ -41,7 +41,7 @@ export default async function ProductsAdmin() {
               {/* ==========================================
             DESKTOP CARD (Visible: lg+)
            ========================================== */}
-              <div className="hidden lg:flex flex-col bg-white rounded-[2.5rem] border border-zinc-100 overflow-hidden hover:shadow-2xl transition-all duration-500 h-full">
+              <div className="hidden lg:flex flex-col bg-white rounded-[2.5rem] border border-zinc-100 overflow-hidden hover:shadow-2xl transition-all duration-500 w-full ">
                 <div className="relative aspect-square overflow-hidden bg-zinc-50 shrink-0">
                   {primaryImage ? (
                     <Image
@@ -76,13 +76,13 @@ export default async function ProductsAdmin() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-4 mt-4 border-t border-zinc-50">
+                  <div className="flex items-center gap-3 mt-4 border-t border-zinc-50">
                     <Link
                       href={`/admin/products/edit/${product.id}`}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-zinc-100 text-xs font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-zinc-100 text-xs font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all"
                     >
-                      <Edit2 size={14} />
-                      Edit Product
+                      <Edit2 size={12} />
+                      Edit
                     </Link>
                     <DeleteProductButton productId={product.id} />
                   </div>
