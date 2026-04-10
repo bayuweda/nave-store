@@ -8,7 +8,7 @@ export default async function ProductsPage() {
   log("ProductsPage - fetched products:", products); // Debug log untuk memastikan data sudah diambil
 
   return (
-    <section className="px-6 md:px-16 py-20 bg-white">
+    <section className="px-6 md:px-16 py-10 bg-white">
       <div className="max-w-7xl mx-auto">
         <BackButton />
         <h1 className="text-4xl font-black uppercase tracking-tighter mb-12 text-black">

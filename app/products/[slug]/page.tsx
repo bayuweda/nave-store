@@ -53,7 +53,7 @@ export default async function ProductDetail({
   const waLink = `https://wa.me/628123456789?text=${encodeURIComponent(waMessage)}`;
 
   return (
-    <div className="bg-gradient-to-r from-[#382B19] to-[#F5F5F5] w-full  text-white min-h-screen">
+    <div className="bg-gradient-to-r  from-[#382B19] to-[#F5F5F5] w-full  text-white min-h-screen">
       <Navbar />
 
       <main className="pt-16 md:pt-24 pb-20">
@@ -88,7 +88,7 @@ export default async function ProductDetail({
 
               {/* Description Section */}
               <div className="border-t border-white/10 pt-6 mt-6 md:pt-8 md:mt-8">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-white/50">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-white">
                   Description
                 </h3>
                 {/* Teks deskripsi diubah ke putih transparan agar tidak terlalu kontras tapi tetap terbaca */}
@@ -101,10 +101,6 @@ export default async function ProductDetail({
               {/* Action Buttons */}
               <div className="mt-8 md:mt-12 flex flex-col gap-3">
                 <OrderActions product={product} />
-
-                <div className="flex justify-center">
-                  <BackButton />
-                </div>
               </div>
             </div>
           </div>

@@ -40,7 +40,7 @@ export default function ProductPageClient({ initialProducts }: Props) {
         {filtered.length > 0 ? (
           <ProductGrid products={filtered} />
         ) : (
-          <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-3xl">
+          <div className="text-center  border-2 border-dashed border-gray-100 rounded-3xl">
             <p className="text-gray-400 font-medium">
               Tidak ada produk yang sesuai dengan filter.
             </p>

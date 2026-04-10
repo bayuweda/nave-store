@@ -43,7 +43,7 @@ export default function ProductCard({ product }: any) {
             {product.name}
           </h3>
         </div>
-        <p className="text-zinc-500 text-sm font-medium">
+        <p className="text-slate-300 text-sm font-medium">
           {product.price
             ? `Rp ${product.price.toLocaleString("id-ID")}`
             : "Price N/A"}

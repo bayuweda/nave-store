@@ -233,9 +233,9 @@ export default function ManageBanners() {
                 banners.map((banner) => (
                   <div
                     key={banner.id}
-                    className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 group flex gap-6"
+                    className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 group flex gap-2 lg:gap-6"
                   >
-                    <div className="relative w-40 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50">
+                    <div className="relative w-20 h-14 lg:w-40 lg:h-24 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50">
                       <Image
                         src={banner.image_url}
                         alt="banner"
@@ -244,7 +244,7 @@ export default function ManageBanners() {
                       />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <h3 className="font-bold uppercase tracking-tight text-sm">
+                      <h3 className="lg:font-bold font-semibold uppercase tracking-tight text-xs lg:text-sm">
                         {banner.title || "Untitled Banner"}
                       </h3>
                       <div className="flex items-center gap-2 mt-1 text-gray-400 text-[10px] font-medium uppercase tracking-widest">
