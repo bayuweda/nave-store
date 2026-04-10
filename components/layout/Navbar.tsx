@@ -96,6 +96,9 @@ export default function Navbar() {
         <li className="hover:text-[#BA9963] transition-colors">
           <Link href="#footer">Contact</Link>
         </li>
+        <li className="hover:text-[#BA9963] transition-colors">
+          <Link href="/about">About US</Link>
+        </li>
       </ul>
 
       {/* RIGHT: SEARCH & AUTH */}

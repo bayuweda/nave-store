@@ -11,8 +11,8 @@ export default function Hero() {
       />
 
       {/* LEFT CONTENT */}
-      <div className="max-w-lg text-white z-20 relative">
-        <p className="text-sm mb-2 opacity-80 uppercase tracking-widest">
+      <div className=" text-white z-20 w-full flex justify-end h-full items-end">
+        {/* <p className="text-sm mb-2 opacity-80 uppercase tracking-widest">
           NEW COLLECTION
         </p>
 
@@ -28,9 +28,9 @@ export default function Hero() {
         </p>
         <p className="mb-6 lg:hidden text-sm md:text-xl font-jakarta font-extralight opacity-80">
           Koleksi fashion modern dengan <br /> kualitas terbaik
-        </p>
+        </p> */}
 
-        <button className="bg-gradient-to-r from-[#54452D] to-[#BA9963] hover:scale-105 transition lg:px-8 lg:py-4 py-2 px-4 rounded-sm lg:text-sm text-[10px] font-bold uppercase tracking-widest">
+        <button className="bg-gradient-to-r from-[#54452D] to-[#BA9963] hover:scale-105 transition lg:px-8 lg:py-4 py-2 px-4 rounded-sm lg:text-sm text-[10px] font-bold uppercase tracking-widest right-0 w-30 h-10">
           Explore Collection
         </button>
       </div>
