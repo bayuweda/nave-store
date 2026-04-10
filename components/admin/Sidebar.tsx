@@ -8,6 +8,7 @@ import {
   Shirt,
   Image as ImageIcon,
   MessageSquare,
+  Settings, // Import icon Settings
   Menu,
   X,
   ChevronRight,
@@ -22,6 +23,7 @@ export default function Sidebar() {
     { name: "Products", href: "/admin/products", icon: Shirt },
     { name: "Banner", href: "/admin/banner", icon: ImageIcon },
     { name: "Reviews", href: "/admin/reviews", icon: MessageSquare },
+    { name: "Settings", href: "/admin/settings", icon: Settings }, // TOMBOL BARU DISINI
   ];
 
   return (
@@ -38,9 +40,7 @@ export default function Sidebar() {
       <aside
         className={`
         fixed inset-y-0 left-0 z-[80] flex flex-col transition-all duration-500 ease-in-out border-r border-white/5
-        /* DESKTOP: Selalu Lebar 72 & BG Hitam */
         lg:relative lg:w-72 lg:bg-black lg:translate-x-0 lg:p-8
-        /* MOBILE: Lebar berubah sesuai state isExpanded */
         ${isExpanded ? "w-72 bg-black p-6 shadow-2xl" : "w-20 bg-black p-3 translate-x-0"}
       `}
       >
@@ -60,7 +60,6 @@ export default function Sidebar() {
         <div className="mb-12 flex flex-col items-center lg:items-start transition-all duration-300">
           <Link href="/">
             <h2 className="text-2xl font-black italic tracking-tighter uppercase text-white">
-              {/* Tampilkan NAVE di desktop, tampilkan N/NAVE di mobile */}
               <span className="hidden lg:block">NAVE</span>
               <span className="lg:hidden">{isExpanded ? "NAVE" : "N"}</span>
             </h2>
@@ -83,9 +82,7 @@ export default function Sidebar() {
                 onClick={() => setIsExpanded(false)}
                 className={`
                   flex items-center group rounded-2xl transition-all duration-300 py-4
-                  /* Desktop: Selalu Lebar & Rata Kiri */
                   lg:px-6 lg:justify-between lg:w-full
-                  /* Mobile: Ciut/Lebar sesuai state */
                   ${isExpanded ? "px-6 justify-between w-full" : "justify-center w-full px-0"}
                   ${
                     isActive
@@ -103,7 +100,6 @@ export default function Sidebar() {
                         : "group-hover:text-[#BA9963] transition-colors"
                     }
                   />
-                  {/* Teks: Selalu muncul di Desktop, Kondisional di Mobile */}
                   <span
                     className={`text-[11px] font-bold uppercase tracking-widest transition-all duration-300 
                     lg:opacity-100 lg:block lg:w-auto
@@ -112,7 +108,6 @@ export default function Sidebar() {
                     {item.name}
                   </span>
                 </div>
-                {/* Arrow: Selalu muncul di Desktop, Kondisional di Mobile */}
                 <ChevronRight
                   size={14}
                   className={`opacity-40 lg:block ${isExpanded && isActive ? "block" : "hidden"}`}
