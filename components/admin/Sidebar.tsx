@@ -58,11 +58,13 @@ export default function Sidebar() {
 
         {/* LOGO AREA */}
         <div className="mb-12 flex flex-col items-center lg:items-start transition-all duration-300">
-          <h2 className="text-2xl font-black italic tracking-tighter uppercase text-white">
-            {/* Tampilkan NAVE di desktop, tampilkan N/NAVE di mobile */}
-            <span className="hidden lg:block">NAVE</span>
-            <span className="lg:hidden">{isExpanded ? "NAVE" : "N"}</span>
-          </h2>
+          <Link href="/">
+            <h2 className="text-2xl font-black italic tracking-tighter uppercase text-white">
+              {/* Tampilkan NAVE di desktop, tampilkan N/NAVE di mobile */}
+              <span className="hidden lg:block">NAVE</span>
+              <span className="lg:hidden">{isExpanded ? "NAVE" : "N"}</span>
+            </h2>
+          </Link>
           <p
             className={`text-[9px] text-zinc-500 font-bold uppercase tracking-[0.3em] mt-1 whitespace-nowrap lg:block ${isExpanded ? "block" : "hidden"}`}
           >

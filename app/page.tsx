@@ -17,6 +17,7 @@ async function getProducts() {
     .select(
       `
       id,
+      slug,
       name,
       price,
       category,

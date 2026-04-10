@@ -9,7 +9,8 @@ async function getFeaturedProducts() {
       id,
       name,
       price,
-      product_images (url, is_primary)
+      product_images (url, is_primary),
+      slug
     `,
     )
     .eq("featured", true)
