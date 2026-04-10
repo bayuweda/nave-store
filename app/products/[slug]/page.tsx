@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { MessageCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import BackButton from "@/components/products/BackButton";
+import OrderActions from "@/components/products/OrderActions";
 
 async function getProductDetail(slug: string) {
   const { data, error } = await supabase
@@ -99,15 +100,7 @@ export default async function ProductDetail({
 
               {/* Action Buttons */}
               <div className="mt-8 md:mt-12 flex flex-col gap-3">
-                <a
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 bg-white text-black py-4 md:py-5 px-8 rounded-full font-black uppercase text-[10px] md:text-xs tracking-[0.2em] hover:bg-[#BA9963] hover:text-white transition-all duration-500 shadow-xl"
-                >
-                  <MessageCircle size={18} />
-                  Order via WhatsApp
-                </a>
+                <OrderActions product={product} />
 
                 <div className="flex justify-center">
                   <BackButton />
