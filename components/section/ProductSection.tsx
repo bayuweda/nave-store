@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"; // 1. Import useRouter
 import { supabase } from "@/lib/supabase";
 import LoadingModal from "@/components/ui/LoadingModal"; // 2. Import LoadingModal
 import ProductCard from "@/components/products/ProductCard"; // Pastikan sudah ada komponen ini
+import FeaturedSlider from "../FeaturedSlider";
 
 export default function ProductSection({
   initialProducts = [],
@@ -45,7 +46,7 @@ export default function ProductSection({
   );
 
   return (
-    <section className="px-6 md:px-16 py-16 text-black bg-gray-100">
+    <section className="px-6 md:px-16 py-16 text-black bg-white overflow-hidden ">
       {/* CATEGORY BUTTONS */}
       <div className="flex justify-center flex-wrap gap-3 mb-10">
         {categories.map((cat) => (
@@ -66,21 +67,25 @@ export default function ProductSection({
       </div>
 
       {/* PRODUCT GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
-        {filtered.slice(0, 4).map((product) => (
-          /* Panggil komponen yang sudah ada. 
-       Logika LoadingModal & Navigasi otomatis ikut karena 
-       sudah tertanam di dalam ProductCard tersebut.
+      {/* PRODUCT GRID - Diubah jadi Container Slider */}
+      <div className="w-full">
+        {filtered.length > 0 ? (
+          /* Panggil Slider-nya SEKALI saja, kirim seluruh data 'filtered' ke dalamnya.
+       Jangan lupa sesuaikan nama prop-nya (di sini saya pakai 'products') 
     */
-          <ProductCard key={product.id} product={product} />
-        ))}
+          <FeaturedSlider products={filtered.slice(0, 8)} />
+        ) : (
+          <div className="text-center py-10 text-zinc-400 text-xs uppercase tracking-widest">
+            No products found in this category
+          </div>
+        )}
       </div>
 
       {/* VIEW MORE BUTTON */}
-      <div className="flex justify-center mt-16">
+      <div className="flex justify-center mt-8 lg:mt-16">
         <button
           onClick={() => handleNavigate("/products")}
-          className="border-2 border-[#7B5E3B] text-[#7B5E3B] font-bold lg:text-xs text-[10px] uppercase tracking-[0.2em] lg:px-10 lg:py-4 px-6 py-3 hover:bg-[#7B5E3B] hover:text-white transition-all duration-300"
+          className="border-2 border-[#7B5E3B] text-[#7B5E3B] font-bold lg:text-xs text-[10px] uppercase lg:tracking-[0.2em] lg:px-10 lg:py-4 px-6 py-3 hover:bg-[#7B5E3B] hover:text-white transition-all duration-300"
         >
           View All Collections
         </button>

@@ -34,15 +34,34 @@ export default async function Hero() {
 
           {/* TIPOGRAFI KHUSUS VIDEO (Minimalis & Center/Left) */}
           <div className="w-full flex justify-center text-white z-20 relative px-6">
-            <div className="flex flex-col gap-8 items-center text-center">
-              <div className="space-y-2">
-                <h1 className="font-black text-white/20  text-4xl md:text-7xl italic uppercase  animate-fade-in">
+            <div className="flex flex-col items-center text-center">
+              {/* LOGO AREA - Dibuat lebih dramatis */}
+              <div className="relative mb-4 md:mb-6">
+                {/* Background Text: Sangat besar, sangat transparan, sebagai tekstur visual */}
+                <h1 className="font-black text-white/5 text-7xl md:text-[12rem] italic uppercase leading-none tracking-tighter select-none">
                   NAVE
                 </h1>
+
+                {/* Foreground Text: Teks utama yang lebih terbaca */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <h2 className="font-black text-white text-3xl md:text-6xl italic uppercase tracking-[0.4em] ml-[0.4em] drop-shadow-2xl">
+                    NAVE
+                  </h2>
+                  <p className="text-[8px] md:text-[10px] tracking-[0.6em] uppercase opacity-40 font-light mt-1 md:mt-2">
+                    International Streetwear
+                  </p>
+                </div>
               </div>
 
-              <button className="mt-4 border border-white/20 bg-white/5 backdrop-blur-lg hover:bg-white hover:text-black transition-all duration-700 px-12 py-5 text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl">
-                Watch Collection
+              {/* BUTTON - Diperkecil sedikit untuk Mobile agar tidak makan tempat */}
+              <button className="group relative mt-6 md:mt-10 overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md hover:bg-white transition-all duration-500 px-8 py-4 md:px-14 md:py-6 text-[9px] md:text-[11px] font-black uppercase tracking-[0.4em]">
+                {/* Hover Effect: Teks jadi hitam saat hover */}
+                <span className="relative z-10 group-hover:text-black transition-colors duration-500">
+                  Watch Collection
+                </span>
+
+                {/* Animasi kilatan cahaya saat di-hover (Opsional tapi keren) */}
+                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/10 opacity-40 group-hover:animate-shine" />
               </button>
             </div>
           </div>

@@ -10,6 +10,8 @@ import ProductSection from "@/components/section/ProductSection";
 import ReviewSection from "@/components/section/ReviewSection";
 import WhyChooseUs from "@/components/section/WhyChooseUs";
 import Image from "next/image";
+import Location from "@/components/section/Location";
+import Lookbook from "@/components/section/Lookbook";
 
 async function getProducts() {
   const { data, error } = await supabase
@@ -43,13 +45,31 @@ export default async function Home() {
   return (
     <>
       <Navbar />
+
+      {/* 1. IMPACT: Kesan pertama yang kuat */}
       <Hero />
-      <Featured />
-      <BannerCarousel />
-      <ProductSection initialProducts={products} />
+
+      {/* 2. BRAND VIBE: Membangun atmosfer & gaya hidup NAVE */}
+      <Lookbook />
+
+      {/* 3. TRUST: Mengapa NAVE beda dari brand lain? */}
       <WhyChooseUs />
-      <BestProduct />
+
+      {/* 4. MAIN ACTION: Katalog utama untuk eksplorasi */}
+      <ProductSection initialProducts={products} />
+
+      {/* 5. HIGHLIGHT: Pengingat visual/promo di tengah scrolling */}
+      <BannerCarousel />
+
+      {/* 6. BEST SELLERS: Mempersempit pilihan ke yang paling populer */}
+      <Featured />
+
+      {/* 7. REPUTATION: Testimoni untuk meyakinkan pembeli ragu */}
       <ReviewSection />
+
+      {/* 8. PRESENCE: Di mana mereka bisa menemukan "Hype" ini secara fisik */}
+      <Location />
+
       <Footer />
     </>
   );
