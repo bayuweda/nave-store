@@ -6,9 +6,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 
-import "swiper/css";
-import "swiper/css/pagination";
-
 export default function BannerCarousel() {
   const [banners, setBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +15,8 @@ export default function BannerCarousel() {
       const { data, error } = await supabase
         .from("banners")
         .select("*")
-        .eq("is_active", true) // Hanya ambil yang aktif
-        .order("order_index", { ascending: true }); // Urutkan sesuai input admin
+        .eq("is_active", true)
+        .order("order_index", { ascending: true });
 
       if (!error && data) {
         setBanners(data);
@@ -31,52 +28,56 @@ export default function BannerCarousel() {
   }, []);
 
   if (loading) {
-    return <div className="w-full h-[400px] bg-gray-200 animate-pulse" />;
-  }
-
-  // Fallback jika tidak ada banner di database
-  if (banners.length === 0) {
     return (
-      <section className="w-full h-[400px] bg-zinc-900 flex items-center justify-center text-white italic">
-        NAVE Collections Coming Soon
-      </section>
+      <div className="w-full aspect-[16/9] md:h-[500px] bg-gray-200 animate-pulse" />
     );
   }
 
+  if (banners.length === 0) return null;
+
   return (
-    <section className="w-full h-[400px] md:h-[500px]">
+    <section className="w-full relative">
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 5000 }}
         pagination={{ clickable: true }}
-        loop={banners.length > 1} // Hanya loop jika banner > 1
-        className="h-full"
+        loop={banners.length > 1}
+        className="w-full h-auto"
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner.id}>
-            {/* Bungkus dengan Link jika ada link_url */}
-            <a href={banner.link_url} className="relative block w-full h-full">
-              <Image
-                src={banner.image_url}
-                alt={banner.title || "NAVE Banner"}
-                fill
-                priority // Agar LCP (loading awal) lebih cepat
-                className="object-cover"
-                sizes="100vw"
-              />
+            <a href={banner.link_url} className="relative block w-full">
+              {/* 1. Ganti h-[400px] menjadi aspect-ratio agar proporsional.
+                2. Ganti object-cover menjadi object-contain agar gambar kelihatan SEMUA.
+              */}
+              <div className="relative w-full aspect-[16/9] md:h-[600px] bg-white">
+                <Image
+                  src={banner.image_url}
+                  alt={banner.title || "NAVE Banner"}
+                  fill
+                  priority
+                  className="object-contain md:object-cover" // Di mobile kelihatan semua (contain), di desktop tetap penuh (cover)
+                  sizes="100vw"
+                />
+              </div>
 
-              {/* Overlay (Opsional) jika ingin teks di atas banner */}
-              {banner.title && (
-                <div className="absolute inset-0 bg-black/20 flex items-center px-10 md:px-20">
-                  <h2 className="text-white text-3xl md:text-5xl font-black uppercase tracking-tighter">
-                    {banner.title}
-                  </h2>
-                </div>
-              )}
+              {/* Teks Overlay (Disesuaikan agar mengecil di mobile) */}
             </a>
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Custom CSS untuk merapikan pagination dot di mobile agar tidak menumpuk ke gambar */}
+      {/* <style jsx global>{`
+        .swiper-pagination-bullet {
+          background: white !important;
+          opacity: 0.5;
+        }
+        .swiper-pagination-bullet-active {
+          background: #ba9963 !important;
+          opacity: 1;
+        }
+      `}</style> */}
     </section>
   );
 }
