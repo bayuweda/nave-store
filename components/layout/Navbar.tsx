@@ -96,6 +96,9 @@ export default function Navbar() {
         <li className="hover:text-[#BA9963] transition-colors">
           <Link href="#footer">Contact</Link>
         </li>
+        <li className="hover:text-[#BA9963] transition-colors">
+          <Link href="/about">About Us</Link>
+        </li>
       </ul>
 
       {/* RIGHT: SEARCH & AUTH */}
@@ -191,76 +194,94 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE FULLSCREEN MENU */}
+      {/* MOBILE FULLSCREEN MENU */}
       <div
-        className={`fixed top-0 left-0 w-full h-screen bg-black text-white transition-all duration-700 ease-in-out flex flex-col items-center justify-center lg:hidden z-[105]
-  ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
+        className={`fixed inset-0 w-full h-screen bg-white transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden z-[105] flex flex-col
+  ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
-        <ul className="flex flex-col items-start gap-10">
-          {[
-            { name: "Home", href: "/", icon: <Home size={20} /> },
-            {
-              name: "Shop",
-              href: "/products",
-              icon: <ShoppingBag size={20} />,
-            },
-            { name: "Reviews", href: "#reviews", icon: <Star size={20} /> },
-            { name: "Contact", href: "#footer", icon: <Phone size={20} /> },
-          ].map((item) => (
-            <li
-              key={item.name}
-              onClick={() => setOpen(false)}
-              className="group"
-            >
-              <Link
-                href={item.href}
-                className="flex items-center gap-4 text-2xl font-black uppercase italic tracking-[0.4em] group-hover:text-[#BA9963] transition-colors"
+        <div className="flex-1 px-8 pt-32 pb-12 flex flex-col justify-between">
+          {/* MAIN NAV LINKS */}
+          <ul className="flex flex-col gap-8">
+            {[
+              { name: "Home", href: "/" },
+              { name: "Shop Collection", href: "/products" },
+              { name: "Community Proof", href: "#reviews" },
+              { name: "Our Story", href: "/about" },
+              { name: "Contact", href: "#footer" },
+              { name: "About Us", href: "/about" },
+            ].map((item, index) => (
+              <li
+                key={item.name}
+                onClick={() => setOpen(false)}
+                className="overflow-hidden"
               >
-                <span className="text-[#BA9963] opacity-50 group-hover:opacity-100 transition-opacity">
-                  {item.icon}
-                </span>
-                {item.name}
-              </Link>
-            </li>
-          ))}
+                <Link
+                  href={item.href}
+                  className={`block text-xs font-black uppercase tracking-[0.4em] transition-all duration-700 hover:text-[#BA9963] text-black
+            ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+                  style={{ transitionDelay: `${index * 50}ms` }}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-          {/* Admin / Dashboard Section in Mobile Menu */}
-          <li
-            onClick={() => setOpen(false)}
-            className="mt-4 pt-10 border-t border-white/10 w-full flex justify-center"
+          {/* BOTTOM SECTION */}
+          <div
+            className={`space-y-12 transition-all duration-1000 delay-300 ${open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
-            {user ? (
-              <Link
-                href="/admin/dashboard"
-                className="flex items-center gap-3 text-sm font-black uppercase tracking-[0.3em] text-[#BA9963]"
-              >
-                <LayoutDashboard size={18} />
-                Dashboard
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-3 text-sm font-black uppercase tracking-[0.3em] hover:text-[#BA9963] transition-colors"
-              >
-                <User size={18} />
-                Sign In
-              </Link>
-            )}
-          </li>
-        </ul>
+            {/* AUTH AREA */}
+            <div className="pt-8 border-t border-zinc-100">
+              {user ? (
+                <div className="flex flex-col gap-5">
+                  <Link
+                    href="/admin/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="text-[10px] font-black uppercase tracking-[0.2em] text-[#BA9963] flex items-center gap-2"
+                  >
+                    <LayoutDashboard size={14} /> Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setOpen(false);
+                    }}
+                    className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 flex items-center gap-2"
+                  >
+                    <LogOut size={14} /> Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="text-[10px] font-black uppercase tracking-[0.4em] text-black border border-black px-6 py-4 rounded-full inline-block text-center hover:bg-black hover:text-white transition-all"
+                >
+                  Member Login
+                </Link>
+              )}
+            </div>
 
-        {/* Logout Button if Logged In */}
-        {user && (
-          <button
-            onClick={() => {
-              handleLogout();
-              setOpen(false);
-            }}
-            className="absolute bottom-12 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.5em] text-red-500 hover:opacity-70 transition-opacity"
-          >
-            <LogOut size={14} />
-            Logout
-          </button>
-        )}
+            {/* FOOTER INFO */}
+            <div className="flex justify-between items-end">
+              <div className="space-y-2">
+                <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest italic">
+                  Nave® Street Headquarters
+                </p>
+                <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                  Bali, Indonesia
+                </p>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-300"
+              >
+                [ Close ]
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   );

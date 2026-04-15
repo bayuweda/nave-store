@@ -76,9 +76,11 @@ export default function Location() {
             </div>
           </div>
 
-          <button className="border-b-2 border-[#BA9963] pb-2 text-[10px] font-black uppercase tracking-[0.3em] hover:text-[#BA9963] transition-all pt-4">
-            Get Directions
-          </button>
+          <a href="https://maps.app.goo.gl/eobrdRXDmFuQXoDh7">
+            <button className="border-b-2 border-[#BA9963] pb-2 text-[10px] font-black uppercase tracking-[0.3em] hover:text-[#BA9963] transition-all pt-4">
+              Get Directions
+            </button>
+          </a>
         </div>
 
         {/* VISUAL MAP/PHOTO */}
@@ -86,7 +88,7 @@ export default function Location() {
           <div className="absolute -inset-4 border border-zinc-800 rounded-[2rem] group-hover:border-[#BA9963]/30 transition-all duration-500" />
           <div className="relative h-[400px] md:h-[500px] bg-zinc-900 rounded-[2rem] overflow-hidden">
             <img
-              src="/store/interior.jpg"
+              src="/toko/pexels-mart-production-7679789.jpg"
               className="w-full h-full object-cover opacity-70 group-hover:scale-110 transition-transform duration-1000"
               alt="NAVE Store Interior"
             />
