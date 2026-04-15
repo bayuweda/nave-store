@@ -229,7 +229,7 @@ export default function ManageReviews() {
                     </p>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => toggleVisibility(rev.id, rev.is_visible)}
                       className="p-3 bg-zinc-50 rounded-xl hover:bg-zinc-100 transition-all"
