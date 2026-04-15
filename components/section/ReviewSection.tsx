@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star, CheckCircle2 } from "lucide-react";
 
-// Import Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -17,96 +16,92 @@ export default function ReviewSection() {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      const { data } = await supabase
+      // Sesuai screenshot DB terbaru kamu
+      const { data, error } = await supabase
         .from("reviews")
         .select("*")
-        .eq("is_visible", true)
+        .eq("is_visible", true) // Hanya tampilkan yang di-set visible oleh admin
         .order("created_at", { ascending: false });
-      // Kita hilangkan limit(3) agar carousel bisa menampung banyak review
 
       if (data) setReviews(data);
       setLoading(false);
     };
-
     fetchReviews();
   }, []);
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }).map((_, i) => (
-      <Star
-        key={i}
-        className={`w-3 h-3 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-      />
-    ));
-  };
-
   if (loading)
     return (
-      <div className="py-20 text-center text-gray-400 animate-pulse uppercase tracking-widest text-xs">
-        Loading Reviews...
+      <div className="py-20 text-center text-gray-400 animate-pulse uppercase tracking-widest text-[10px]">
+        Gathering Community Proof...
       </div>
     );
 
   return (
     <section className="px-6 md:px-16 py-24 text-black bg-white overflow-hidden">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter">
-          What Our Customers Say
+        <h2 className="text-[10px] font-black tracking-[0.5em] text-[#BA9963] uppercase mb-4">
+          Community Feedback
         </h2>
-        <div className="w-12 h-1 bg-black mx-auto mt-4"></div>
-        <p className="text-gray-500 mt-6 text-sm uppercase tracking-widest">
-          Real feedback from the NAVE community
-        </p>
+        <h3 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter">
+          THE PROOF
+        </h3>
       </div>
 
       <div className="max-w-7xl mx-auto">
         <Swiper
           modules={[Autoplay, Pagination]}
-          spaceBetween={30}
-          slidesPerView={1}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          pagination={{ clickable: true, dynamicBullets: true }}
+          spaceBetween={20}
+          slidesPerView={1.2}
+          autoplay={{ delay: 4000 }}
+          pagination={{ clickable: true }}
           breakpoints={{
-            // Saat layar >= 768px (Desktop), tampilkan 3 slide
-            768: {
-              slidesPerView: 3,
-            },
-            // Saat layar >= 640px (Tablet), tampilkan 2 slide
-            640: {
-              slidesPerView: 2,
-            },
+            768: { slidesPerView: 3, spaceBetween: 30 },
+            640: { slidesPerView: 2, spaceBetween: 20 },
           }}
-          className="pb-16" // Beri padding bawah untuk dots pagination
+          className="pb-20"
         >
           {reviews.map((review) => (
-            <SwiperSlide key={review.id} className="h-auto">
-              <div className="bg-gray-50 p-8 rounded-2xl border border-gray-100 h-full flex flex-col transition-all duration-300 hover:border-[#7B5E3B]/30 hover:shadow-xl hover:shadow-gray-100">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+            <SwiperSlide key={review.id}>
+              <div className="group bg-zinc-50 rounded-2xl border border-zinc-100 overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                {/* BAGIAN GAMBAR / SCREENSHOT BUKTI */}
+                <div className="relative aspect-[4/5] w-full bg-zinc-200">
+                  {review.image_url ? (
                     <Image
-                      src={review.image_url || "/images/default-avatar.png"}
-                      alt={review.name}
+                      src={review.image_url}
+                      alt="NAVE Proof"
                       fill
-                      className="object-cover"
+                      unoptimized // Menghindari error 500 karena optimasi server Next.js
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                  </div>
-
-                  <div>
-                    <h4 className="font-bold text-sm uppercase tracking-tight line-clamp-1">
-                      {review.name}
-                    </h4>
-                    <div className="flex gap-1 mt-1">
-                      {renderStars(review.rating)}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[10px] uppercase font-black text-zinc-400">
+                      No Image Found
                     </div>
+                  )}
+
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2">
+                    <CheckCircle2 size={12} className="text-green-600" />
+                    <span className="text-[9px] font-black uppercase tracking-widest">
+                      Verified
+                    </span>
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-sm leading-relaxed italic flex-grow">
-                  "{review.review_text}"
-                </p>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className="font-black text-xs uppercase tracking-tight">
+                        @
+                        {review.name?.replace(/\s+/g, "").toLowerCase() ||
+                          "customer"}
+                      </h4>
+                    </div>
+                  </div>
 
-                <div className="mt-6 text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em]">
-                  Verified Buyer
+                  {/* Sesuai DB: Menggunakan kolom 'review_text' */}
+                  <p className="text-zinc-600 text-xs leading-relaxed italic line-clamp-3">
+                    "{review.review_text || "No review text provided."}"
+                  </p>
                 </div>
               </div>
             </SwiperSlide>
@@ -114,10 +109,9 @@ export default function ReviewSection() {
         </Swiper>
       </div>
 
-      {/* Custom Styling untuk Swiper Pagination agar sesuai brand NAVE */}
       <style jsx global>{`
         .swiper-pagination-bullet-active {
-          background: #000 !important;
+          background: #ba9963 !important;
         }
       `}</style>
     </section>

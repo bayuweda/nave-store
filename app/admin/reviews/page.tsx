@@ -6,11 +6,12 @@ import {
   UserPlus,
   Trash2,
   Star,
-  MessageSquare,
   CheckCircle2,
-  X,
   Eye,
   EyeOff,
+  Upload,
+  Image as ImageIcon,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -20,11 +21,12 @@ export default function ManageReviews() {
 
   // Form States
   const [name, setName] = useState("");
-  const [reviewText, setReviewText] = useState("");
+  const [reviewText, setReviewText] = useState(""); // Kembali ke review_text sesuai gambar DB
   const [rating, setRating] = useState(5);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // 1. Fetch Reviews
   const fetchReviews = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -40,192 +42,209 @@ export default function ManageReviews() {
     fetchReviews();
   }, []);
 
-  // 2. Submit Review (Admin Manual Input)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !reviewText) return alert("Nama dan isi review wajib diisi!");
+    if (!name || !reviewText || !imageFile) {
+      return alert("Nama, Bukti Gambar, dan Review wajib diisi!");
+    }
 
     setIsUploading(true);
-    const { error } = await supabase.from("reviews").insert({
-      name,
-      review_text: reviewText,
-      rating,
-      is_visible: true,
-    });
+    try {
+      // 1. Upload ke Storage
+      const fileExt = imageFile.name.split(".").pop();
+      const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
+      const filePath = `proofs/${fileName}`;
 
-    if (!error) {
+      const { error: uploadError } = await supabase.storage
+        .from("review_proofs")
+        .upload(filePath, imageFile);
+
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("review_proofs").getPublicUrl(filePath);
+
+      // 2. Insert ke Database (SESUAI GAMBAR DB BARU)
+      const { error: dbError } = await supabase.from("reviews").insert({
+        name,
+        review_text: reviewText, // Sesuai kolom di image_0b77e7.png
+        rating,
+        image_url: publicUrl, // Sesuai kolom di image_0b77e7.png
+        is_visible: true,
+      });
+
+      if (dbError) throw dbError;
+
       alert("Review berhasil ditambahkan!");
       setName("");
       setReviewText("");
-      setRating(5);
+      setImageFile(null);
+      setImagePreview(null);
       fetchReviews();
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsUploading(false);
     }
-    setIsUploading(false);
   };
 
-  // 3. Toggle Visibility (Sembunyikan/Tampilkan)
   const toggleVisibility = async (id: string, currentStatus: boolean) => {
     const { error } = await supabase
       .from("reviews")
       .update({ is_visible: !currentStatus })
       .eq("id", id);
-
     if (!error) fetchReviews();
   };
 
-  // 4. Delete Review
   const handleDelete = async (id: string) => {
-    if (!confirm("Hapus review ini secara permanen?")) return;
+    if (!confirm("Hapus bukti review ini?")) return;
     const { error } = await supabase.from("reviews").delete().eq("id", id);
     if (!error) fetchReviews();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10 text-black">
+    <div className="min-h-screen bg-[#FBFBFB] p-6 md:p-10 text-black">
       <div className="max-w-6xl mx-auto">
-        <header className="mb-10 flex justify-between items-end">
-          <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter">
-              Customer Testimonials
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Kelola suara pelanggan NAVE yang tampil di website.
-            </p>
-          </div>
+        <header className="mb-10">
+          <h1 className="text-3xl font-black uppercase tracking-tighter italic">
+            Review Control
+          </h1>
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1">
+            Nave Community Proof
+          </p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* FORM INPUT MANUAL */}
+          {/* FORM */}
           <div className="lg:col-span-1">
             <form
               onSubmit={handleAddReview}
-              className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-10"
+              className="bg-white p-8 rounded-[2rem] shadow-sm border border-zinc-100 sticky top-10"
             >
-              <h2 className="font-bold mb-6 flex items-center gap-2 uppercase text-xs tracking-widest text-gray-400">
-                <UserPlus className="w-4 h-4 text-black" /> Add Manual Review
-              </h2>
-
-              <div className="space-y-5">
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-gray-400">
-                    Customer Name
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full border-b border-gray-100 py-2 outline-none focus:border-black transition-colors text-sm font-medium"
-                    placeholder="Contoh: Andi Saputra"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-gray-400">
-                    Rating
-                  </label>
-                  <div className="flex gap-2 mt-2">
-                    {[1, 2, 3, 4, 5].map((num) => (
+              <div className="space-y-6">
+                {/* UPLOAD BOX */}
+                <div className="relative group">
+                  {imagePreview ? (
+                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border-2 border-zinc-100">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
                       <button
-                        key={num}
                         type="button"
-                        onClick={() => setRating(num)}
-                        className={`transition-all ${num <= rating ? "text-yellow-400" : "text-gray-200"}`}
+                        onClick={() => {
+                          setImagePreview(null);
+                          setImageFile(null);
+                        }}
+                        className="absolute top-2 right-2 bg-black text-white p-1 rounded-full"
                       >
-                        <Star
-                          className={`w-5 h-5 ${num <= rating ? "fill-current" : ""}`}
-                        />
+                        <X size={14} />
                       </button>
-                    ))}
-                  </div>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center aspect-[4/5] border-2 border-dashed border-zinc-200 rounded-2xl cursor-pointer hover:bg-zinc-50 transition-all">
+                      <Upload size={24} className="text-zinc-300 mb-2" />
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-center px-4">
+                        Upload Screenshot Proof
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  )}
                 </div>
 
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-gray-400">
-                    Review Message
-                  </label>
-                  <textarea
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                    rows={4}
-                    className="w-full border border-gray-100 rounded-xl p-3 mt-2 outline-none focus:border-black transition-colors text-sm resize-none"
-                    placeholder="Tulis testimoni pelanggan di sini..."
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-zinc-50 px-4 py-3 rounded-xl outline-none text-sm font-bold"
+                  placeholder="Customer Name"
+                />
+
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  rows={3}
+                  className="w-full bg-zinc-50 px-4 py-3 rounded-xl outline-none text-sm italic"
+                  placeholder="Review text..."
+                />
 
                 <button
                   disabled={isUploading}
-                  className="w-full bg-black text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-zinc-800 disabled:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-black text-white py-5 rounded-2xl font-black uppercase text-[11px] tracking-[0.3em] hover:bg-[#BA9963] disabled:bg-zinc-200 transition-all"
                 >
-                  {isUploading ? (
-                    "Saving..."
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" /> Save Review
-                    </>
-                  )}
+                  {isUploading ? "Uploading..." : "Save Proof"}
                 </button>
               </div>
             </form>
           </div>
 
-          {/* LIST REVIEWS */}
+          {/* LIST */}
           <div className="lg:col-span-2 space-y-4">
             {loading ? (
-              <div className="h-40 bg-gray-100 animate-pulse rounded-2xl" />
-            ) : reviews.length === 0 ? (
-              <div className="bg-white p-20 rounded-2xl border-2 border-dashed border-gray-100 text-center text-gray-400 italic">
-                Belum ada review tersimpan.
-              </div>
+              <div className="h-40 bg-zinc-100 animate-pulse rounded-[2rem]" />
             ) : (
               reviews.map((rev) => (
                 <div
                   key={rev.id}
-                  className={`bg-white p-6 rounded-2xl shadow-sm border transition-all flex gap-6 ${rev.is_visible ? "border-gray-100" : "border-gray-200 opacity-60 bg-gray-50"}`}
+                  className={`bg-white p-4 rounded-[1.5rem] border flex gap-6 items-center ${rev.is_visible ? "border-zinc-100" : "border-zinc-200 opacity-50"}`}
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-bold uppercase tracking-tight text-sm">
-                        {rev.name}
-                      </h3>
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: rev.rating }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className="w-3 h-3 fill-yellow-400 text-yellow-400"
-                          />
-                        ))}
+                  <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 flex-shrink-0">
+                    {rev.image_url ? (
+                      <Image
+                        src={rev.image_url}
+                        alt={rev.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon size={20} className="text-zinc-300" />
                       </div>
-                    </div>
-                    <p className="text-gray-600 text-sm italic leading-relaxed">
+                    )}
+                  </div>
+
+                  <div className="flex-1">
+                    <h3 className="font-black uppercase text-xs tracking-tight italic">
+                      @{rev.name}
+                    </h3>
+                    <p className="text-zinc-500 text-[11px] mt-1 line-clamp-2 italic">
                       "{rev.review_text}"
-                    </p>
-                    <p className="text-[9px] text-gray-400 mt-4 uppercase tracking-widest">
-                      Added on {new Date(rev.created_at).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => toggleVisibility(rev.id, rev.is_visible)}
-                      className={`p-2 rounded-lg transition-colors ${rev.is_visible ? "bg-blue-50 text-blue-600 hover:bg-blue-100" : "bg-gray-200 text-gray-600 hover:bg-gray-300"}`}
-                      title={
-                        rev.is_visible
-                          ? "Sembunyikan dari Website"
-                          : "Tampilkan di Website"
-                      }
+                      className="p-3 bg-zinc-50 rounded-xl hover:bg-zinc-100 transition-all"
                     >
                       {rev.is_visible ? (
-                        <Eye className="w-4 h-4" />
+                        <Eye size={16} />
                       ) : (
-                        <EyeOff className="w-4 h-4" />
+                        <EyeOff size={16} className="text-zinc-400" />
                       )}
                     </button>
                     <button
                       onClick={() => handleDelete(rev.id)}
-                      className="p-2 bg-red-50 text-red-600 hover:bg-red-100 transition-colors rounded-lg"
-                      title="Hapus Review"
+                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>

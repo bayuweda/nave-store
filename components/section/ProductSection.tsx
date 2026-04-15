@@ -48,12 +48,12 @@ export default function ProductSection({
   return (
     <section className="px-6 md:px-16 py-16 text-black bg-white overflow-hidden ">
       {/* CATEGORY BUTTONS */}
-      <div className="flex justify-center flex-wrap gap-3 mb-10">
+      <div className="flex justify-center flex-wrap gap-1 lg:gap-3 mb-10">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActive(cat)}
-            className={`lg:px-5 lg:py-2 px-3 py-1 rounded-md text-[8px] lg:text-xs font-medium uppercase tracking-wider transition-all
+            className={`lg:px-5 lg:py-2 px-4 py-2 rounded-md text-[8px] lg:text-xs font-medium uppercase tracking-wider transition-all
               ${
                 active === cat
                   ? "bg-[#7B5E3B] text-white shadow-lg scale-105"
